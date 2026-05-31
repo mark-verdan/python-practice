@@ -1,25 +1,26 @@
-price = { "water" : 10, "milk" : 15, "bread" : 20 }
+price = { "water" : 10, "milk" : 15, "bread" : 20, "iphone": 51}
 
-user_money = 50
 
-shop_items = ["water", "milk", "bread"]
-
-def buy_item(item):
+def buy_item(item, current_money):
     """Buys an item from the shop if the user has enough money."""
-    if item in shop_items:
-        global user_money
-        if user_money >= price[item]:
-            user_money -= price[item]
-            print(f"You bought {item} for {price[item]} dollars. You have {user_money} dollars left.")
-        else:
-            print("You don't have enough money to buy that item.")
+    if item not in price:
+        print("Item is not available.") 
+        return current_money
+        
+    cost = price[item] 
+    if current_money >= cost:
+        current_money -= cost
+        print(f"You have successfully bought {item} for {cost}$! Money remaining: {current_money}$") 
+        user_inventory.append(item)
+        return current_money
     else:
-        print("That item is not available in the shop.")
+        print("You don't have enough money.")
+        return current_money
 
 def continue_shopping():
     """Asks the user if they want to continue shopping."""
     while True:
-        choice = input("Do you want to continue shopping? (yes/no): ").lower()
+        choice = input("Do you want to continue shopping? (yes/no): ").strip().lower()
         if choice == "yes":
             return True
         elif choice == "no":
@@ -28,12 +29,22 @@ def continue_shopping():
         else:
             print("Please enter 'yes' or 'no'.")
 
-while True:
-    print("Welcome to the shop! We have the following items for sale:")
-    print(shop_items)
-    buy_item(input("What would you like to buy?:  ").lower())
+#game starts here
 
-    if continue_shopping():
-        continue
-    else:
+user_money = 50
+user_inventory = [] 
+
+
+while True:
+    print(f"You currently have {user_money}$.")
+    print(f"Your shopping cart: {user_inventory}") 
+    print("Welcome to the shop! We have the following items for sale:")
+    for item, cost in price.items():
+        print(f"{item}: {cost}$") 
+    
+    selection = input("What would you like to buy?: ").strip().lower()
+    user_money = buy_item(selection, user_money)
+        
+
+    if not continue_shopping():
         break
